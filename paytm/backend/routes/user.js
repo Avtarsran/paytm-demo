@@ -70,6 +70,15 @@ router.post("/signin",async(req,res)=>{
     
 });
 
+router.get("/me",userMiddlware,async(req,res)=>{
+    const userId = req.userId
+    const user = await Users.findById(userId)
+    if(!user){
+        return res.status(404).json({message:"User not found",userSigned: false})
+    }
+    res.json({user:user,userSigned: true})
+})
+
 router.put("/",userMiddlware,async(req,res)=>{
     const {success} = userValidationUpdate.safeParse(req.body)
     if(!success){
@@ -85,7 +94,8 @@ router.put("/",userMiddlware,async(req,res)=>{
     }
 })
 
-router.get("/bulk",async(req,res)=>{
+router.get("/bulk",userMiddlware,async(req,res)=>{
+    const userId = req.userId;
     const filter = req.query.filter || ""
     const users = await Users.find({
         $or: [
@@ -93,8 +103,11 @@ router.get("/bulk",async(req,res)=>{
             {lastName:{$regex:filter,$options:"i"}}
        ]
     })
+    console.log(userId)
+    const usersData = users.filter(user=>user._id!=userId)
+    console.log(usersData)
     res.json({
-        users: users.map(user=>({
+        users: usersData.map(user=>({
             id:user._id,
             firstName:user.firstName,
             lastName:user.lastName,
