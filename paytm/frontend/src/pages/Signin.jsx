@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Heading from '../components/Heading'
 import SubHeading from '../components/SubHeading'
 import Inputbox from '../components/Inputbox'
@@ -6,12 +6,34 @@ import Button from '../components/Button'
 import BottomWarning from '../components/BottomWarning'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { useRecoilState } from 'recoil'
+import { classAtom } from '../store/atoms/classAtom'
 function Signin() {
   const [userName,setUserName] = useState("")
   const [password, setPassword] = useState("")
   const navigate = useNavigate()
+  const [classHeight, setClassHeight] = useRecoilState(classAtom)
+ 
+  useEffect(()=>{
+    const updateHeight = () => {
+      if (document.documentElement.scrollHeight >= 557) {
+        setClassHeight('h-screen')
+      }
+      else{
+        setClassHeight('h-full')
+      }
+    };
+
+    updateHeight();
+
+    window.addEventListener('resize', updateHeight);
+
+    return () => {
+      window.removeEventListener('resize', updateHeight);
+    };
+  },[])
   return (
-    <div className='flex justify-center rounded bg-slate-300 h-screen'>
+    <div className={`flex justify-center rounded bg-slate-300 ${classHeight}`}>
       <div className='flex flex-col justify-center'>
         <div className='bg-white w-80 h-max rounded-lg text-center py-2 px-3'>
             <Heading label={"Sign In"}></Heading>

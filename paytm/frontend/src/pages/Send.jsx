@@ -1,9 +1,11 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import Heading from "../components/Heading";
 import Button from "../components/Button";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import Signin from "./Signin";
+import { useRecoilState } from "recoil";
+import { classAtom } from "../store/atoms/classAtom";
 
 function Send() {
   const amount = useRef();
@@ -22,9 +24,29 @@ function Send() {
       </div>
     );
   }
+  const [classHeight, setClassHeight] = useRecoilState(classAtom)
+ 
+  useEffect(()=>{
+    const updateHeight = () => {
+      if (!document.documentElement.scrollHeight >= 557) {
+        setClassHeight('h-full')
+      }
+      else{
+        setClassHeight('h-screen')
+      }
+    };
+
+    updateHeight();
+
+    window.addEventListener('resize', updateHeight);
+
+    return () => {
+      window.removeEventListener('resize', updateHeight);
+    };
+  },[])
   return (
-    <div className="">
-      <div className="flex justify-center rounded bg-slate-300 h-screen">
+
+    <div className={`flex justify-center rounded bg-slate-300 ${classHeight}`}>
         <div className="flex flex-col justify-center">
           <div className="bg-white w-96 h-max rounded-lg text-center py-2 px-3">
             <Heading label={"Send Money"}></Heading>
@@ -74,7 +96,6 @@ function Send() {
           </div>
         </div>
       </div>
-    </div>
   );
 }
 
