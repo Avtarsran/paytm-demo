@@ -3,7 +3,6 @@ import Heading from "../components/Heading";
 import Button from "../components/Button";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
-import Signin from "./Signin";
 import { useRecoilState } from "recoil";
 import { classAtom } from "../store/atoms/classAtom";
 
@@ -13,6 +12,7 @@ function Send() {
   const id = params.get("id");
   const name = params.get("name");
   const navigate = useNavigate();
+  const alertRef = useRef()
   if (!localStorage.getItem("authorization")) {
     return (
       <div className="flex justify-center rounded bg-slate-300 h-screen">
@@ -28,12 +28,14 @@ function Send() {
  
   useEffect(()=>{
     const updateHeight = () => {
-      if (!document.documentElement.scrollHeight >= 557) {
-        setClassHeight('h-full')
-      }
-      else{
+      if (document.documentElement.scrollHeight >= 300) {
         setClassHeight('h-screen')
       }
+      else{
+        setClassHeight('h-full')
+      }
+    console.log(document.documentElement.scrollHeight)
+
     };
 
     updateHeight();
@@ -44,10 +46,13 @@ function Send() {
       window.removeEventListener('resize', updateHeight);
     };
   },[])
-  return (
 
+  return (
     <div className={`flex justify-center rounded bg-slate-300 ${classHeight}`}>
         <div className="flex flex-col justify-center">
+        <div ref={alertRef} className="flex flex-col text-center text-xl font-semibold text-red-500" hidden>
+          
+          </div>
           <div className="bg-white w-96 h-max rounded-lg text-center py-2 px-3">
             <Heading label={"Send Money"}></Heading>
             <div className="flex mt-20">
@@ -67,7 +72,7 @@ function Send() {
             </div>
             <input
               ref={amount}
-              type="text"
+              type="number"
               id="first_name"
               className="shadow border border-gray-300 text-gray-900 text-sm rounded-lg w-full focus:border-blue-500 block p-2 mt-2"
               placeholder="Enter Amount"
@@ -86,7 +91,13 @@ function Send() {
                     },
                   }
                 );
-                navigate("/dashboard");
+                if (response.data.success === false){
+                  alertRef.current.innerHTML = "insufficient balance"
+                }
+                else{
+                  navigate("/dashboard");
+                }
+                
               }}
               type="button"
               className=" mt-3 text-white w-full bg-green-500 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-500 dark:hover:bg-green-600 dark:focus:ring-green-600 dark:border-green-600"

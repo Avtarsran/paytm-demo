@@ -27,14 +27,14 @@ function Users() {
       }} type="text" id="first_name" className="shadow bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:border-blue-500 block p-2" placeholder='Search users...' />
       </div>
       <div className='mx-5 mt-3'>
-            {users.map(user => <User user={user}/>)}
+            {users.map(user => <User key={user._id} user={user}/>)}
         </div>
     </div>
   )
 }
-function User({user}){
+function User({user,key}){
     const navigate = useNavigate()
-    return <div className="flex justify-between" key={user._id}>
+    return <div className="flex justify-between" key={key}>
     <div className="flex">
         <div className="rounded-full h-12 w-12 bg-slate-200 flex justify-center mt-1 mr-2">
             <div className="flex flex-col justify-center h-full text-xl">

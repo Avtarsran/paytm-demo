@@ -28,12 +28,15 @@ router.post("/transfer",userMiddlware,async(req,res)=>{
     const sender = await Account.findOne({userId: userId})
     if(sender.balance < amount || !sender){
         await session.abortTransaction()
-        return res.json({message:'insufficient balance or user not found'})
+        return res.json({message:'insufficient balance or user not found',success:false})
+    }
+    if(amount.toString().startsWith("-")){
+        return res.json({message:'invalid amount',success:false})
     }
     const receiver = await Account.findOne({userId: to})
     if(!receiver){
         await session.abortTransaction()
-        return res.json({message:'user not found'})
+        return res.json({message:'user not found',success:false})
     }
     
     await Account.updateOne({userId: userId},{$inc:{'balance': -amount}}).session(session);

@@ -6,7 +6,7 @@ import Button from '../components/Button'
 import BottomWarning from '../components/BottomWarning'
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilState} from 'recoil'
 import { classAtom } from '../store/atoms/classAtom'
 
 function Signup() {
@@ -14,7 +14,6 @@ function Signup() {
   const [lastName, setLastName] = useState("")
   const [userName, setUsertName] = useState("")
   const [password, setPassword] = useState("")
-  const elementRef = useRef()
   const navigate = useNavigate()
   const [classHeight, setClassHeight] = useRecoilState(classAtom)
  
