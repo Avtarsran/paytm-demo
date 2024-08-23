@@ -18,7 +18,6 @@ router.post("/signup",async(req,res)=>{
     const {firstName, lastName, userName, password} = req.body
     const user = await Users.findOne({userName:userName})
     if(user){
-        console.log(user)
         return res.status(400).json({message: "User already exists"})
     }
     
@@ -97,15 +96,27 @@ router.put("/",userMiddlware,async(req,res)=>{
 router.get("/bulk",userMiddlware,async(req,res)=>{
     const userId = req.userId;
     const filter = req.query.filter || ""
-    const users = await Users.find({
-        $or: [
-            {firstName:{$regex:filter,$options:"i"}},
-            {lastName:{$regex:filter,$options:"i"}}
-       ]
-    })
-    console.log(userId)
+    let users;
+    if(filter.includes(" ")){
+        const name = filter.split(" ")
+        let firstName = name[0]
+        let secondName = name[1]
+        users = await Users.find({
+            $or: [
+                {firstName:{$regex:firstName,$options:"i"}},
+                {lastName:{$regex:secondName,$options:"i"}}
+           ]
+        })
+    }else{
+        users = await Users.find({
+            $or: [
+                {lastName:{$regex:filter,$options:"i"}},
+                {firstName:{$regex:filter,$options:"i"}}
+            ]
+        })
+    }
+    
     const usersData = users.filter(user=>user._id!=userId)
-    console.log(usersData)
     res.json({
         users: usersData.map(user=>({
             id:user._id,

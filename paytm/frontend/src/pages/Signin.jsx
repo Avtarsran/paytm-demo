@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Heading from '../components/Heading'
 import SubHeading from '../components/SubHeading'
 import Inputbox from '../components/Inputbox'
@@ -9,8 +9,8 @@ import { useNavigate } from 'react-router-dom'
 import { useRecoilState } from 'recoil'
 import { classAtom } from '../store/atoms/classAtom'
 function Signin() {
-  const [userName,setUserName] = useState("")
-  const [password, setPassword] = useState("")
+  const userName = useRef(null)
+  const password = useRef(null)
   const navigate = useNavigate()
   const [classHeight, setClassHeight] = useRecoilState(classAtom)
  
@@ -38,16 +38,12 @@ function Signin() {
         <div className='bg-white w-80 h-max rounded-lg text-center py-2 px-3'>
             <Heading label={"Sign In"}></Heading>
             <SubHeading label={'Enter your credentials to access your account'}></SubHeading>
-            <Inputbox onChange={(e)=>{
-              setUserName(e.target.value)
-            }} label={"User Name:"} placeholder={"john_Dee"}></Inputbox>
-            <Inputbox onChange={(e)=>{
-              setPassword(e.target.value)
-            }} label={"Password:"} placeholder={""}></Inputbox>
+            <Inputbox ref={userName} label={"User Name:"} placeholder={"john_Dee"}></Inputbox>
+            <Inputbox ref={password} label={"Password:"} placeholder={""}></Inputbox>
             <Button onClick={async()=>{
               const response = await axios.post("http://localhost:3000/api/v1/users/signin",{
-                userName:userName,
-                password:password
+                userName:userName.current.value,
+                password:password.current.value
               });
               localStorage.setItem("authorization",`Bearer ${response.data.token}`)
               navigate("/dashboard")

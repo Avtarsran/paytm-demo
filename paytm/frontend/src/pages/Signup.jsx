@@ -10,10 +10,10 @@ import { useRecoilState} from 'recoil'
 import { classAtom } from '../store/atoms/classAtom'
 
 function Signup() {
-  const [firstName, setFirstName] = useState("")
-  const [lastName, setLastName] = useState("")
-  const [userName, setUsertName] = useState("")
-  const [password, setPassword] = useState("")
+  const firstName = useRef(null)
+  const lastName = useRef(null)
+  const userName = useRef(null)
+  const password = useRef(null)
   const navigate = useNavigate()
   const [classHeight, setClassHeight] = useRecoilState(classAtom)
  
@@ -42,25 +42,17 @@ function Signup() {
         <div className='bg-white w-80 h-max rounded-lg text-center py-2 px-3'>
             <Heading label={"Sign Up"}></Heading>
             <SubHeading label={'Enter your information to create an account'}></SubHeading>
-            <Inputbox onChange={(e)=>{
-              setFirstName(e.target.value)
-            }} label={"First Name:"} placeholder={"john"}></Inputbox>
-            <Inputbox onChange={(e)=>{
-              setLastName(e.target.value)
-            }} label={"Last Name:"} placeholder={"dee"}></Inputbox>
-            <Inputbox onChange={(e)=>{
-              setUsertName(e.target.value)
-            }} label={"User Name:"} placeholder={"john_Dee"}></Inputbox>
-            <Inputbox onChange={(e)=>{
-              setPassword(e.target.value)
-            }} label={"Password:"} placeholder={""}></Inputbox>
+            <Inputbox ref={firstName} label={"First Name:"} placeholder={"john"}></Inputbox>
+            <Inputbox ref={lastName} label={"Last Name:"} placeholder={"dee"}></Inputbox>
+            <Inputbox ref={userName} label={"User Name:"} placeholder={"john_Dee"}></Inputbox>
+            <Inputbox ref={password}  label={"Password:"} placeholder={""}></Inputbox>
             <div className='flex flex-col justify-center'>
             <Button onClick={async()=>{
               const response = await axios.post("http://localhost:3000/api/v1/users/signup",{
-                firstName:firstName,
-                lastName:lastName,
-                userName:userName,
-                password:password
+                firstName:firstName.current.value,
+                lastName:lastName.current.value,
+                userName:userName.current.value,
+                password:password.current.value
               });
               localStorage.setItem("authorization",`Bearer ${response.data.token}`)
               navigate("/dashboard")

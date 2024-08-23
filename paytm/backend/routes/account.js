@@ -8,7 +8,6 @@ const router = Router()
 
 router.get("/balance",userMiddlware,async(req,res)=>{
     const userId = req.userId
-    console.log(req.userId)
     try {
         const user = await Account.findOne({userId:userId})
         const balance = user.balance
